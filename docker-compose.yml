@@ -5,7 +5,7 @@ services:
     container_name: mongo
     restart: always
     ports:
-      - "27017:27017"
+      - "27018:27017"
     volumes:
       - ./db-init.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
       - ./backend/docker-setup/mongo/mongo-volume:/data/db

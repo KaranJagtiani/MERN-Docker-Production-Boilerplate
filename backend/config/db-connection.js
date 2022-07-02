@@ -18,6 +18,6 @@ mongoose.connect(DB_URL, mongoOpts, (err, res) => {
   if (err) {
     console.error(err);
   } else {
-    console.log("\nNo errors while connecting to Database.");
+    console.log("\nConnected to the Database.");
   }
 });
