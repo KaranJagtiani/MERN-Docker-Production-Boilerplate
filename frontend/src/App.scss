@@ -1,0 +1,36 @@
+.nav-bar {
+  text-align: center;
+
+  a {
+    font-weight: 500;
+    font-size: 21px !important;
+    text-decoration: none;
+    color: #afafaf;
+    margin-left: 10px;
+  }
+
+  a:hover {
+    color: #f1f1f1;
+    transition: 0.6s all;
+  }
+  // .nav-links {
+  // }
+
+  .nav-heading {
+    a {
+      font-weight: 600;
+      color: #e3e3e3;
+    }
+    a:hover {
+      color: #ffffff;
+    }
+  }
+
+  .nav-heading:hover {
+    cursor: pointer;
+  }
+
+  .active {
+    color: #ffffff;
+  }
+}
