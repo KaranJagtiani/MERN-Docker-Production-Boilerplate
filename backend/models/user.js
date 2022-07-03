@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
 const userSchema = mongoose.Schema({
-  username: {
+  email: {
     type: String,
     required: true,
   },
@@ -11,10 +11,6 @@ const userSchema = mongoose.Schema({
     required: true,
   },
   name: {
-    type: String,
-    required: true,
-  },
-  email: {
     type: String,
     required: true,
   },
@@ -34,17 +30,8 @@ module.exports.getUserById = function (id, callback) {
   User.findById({ _id: id }, callback);
 };
 
-module.exports.authenticateUser = function (username, callback) {
-  User.updateOne(
-    { username: username },
-    { $set: { authenticated: true } },
-    callback
-  );
-};
-
-module.exports.getUserByUsername = function (username, callBack) {
-  const query = { username: username };
-  User.findOne(query, callBack);
+module.exports.authenticateUser = function (email, callback) {
+  User.updateOne({ email: email }, { $set: { authenticated: true } }, callback);
 };
 
 module.exports.getUserByEmail = function (email, callback) {
@@ -79,7 +66,7 @@ module.exports.updatePassword = function (newUser, callback) {
       if (err) throw err;
       newUser.newPassword = hash;
       User.updateOne(
-        { username: newUser.username },
+        { email: newUser.email },
         { $set: { password: newUser.newPassword } },
         callback
       );

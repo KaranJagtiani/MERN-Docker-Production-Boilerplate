@@ -12,7 +12,7 @@ const validateParams = function (paramSchema) {
     try {
       await schema.validateAsync(requestParamObj);
     } catch (err) {
-      return res.json({
+      return res.status(422).json({
         success: false,
         msg: err.details[0].message, // Something went wrong.
       });

@@ -33,7 +33,7 @@ services:
     depends_on:
       - mongo
     ports:
-      - "3000:3000"
+      - "8080:3000"
 
 networks:
   backend:

@@ -16,6 +16,4 @@ RUN npm i --location=global nodemon
 # Copy source directory
 COPY . .
 
-EXPOSE 3000
-
 CMD [ "nodemon" ]
