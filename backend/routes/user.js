@@ -3,7 +3,6 @@ const router = express.Router();
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
 
-const config = require("../config/config");
 const params_validator = require("../helpers/params-validator");
 const jwt_validator = require("../helpers/user-jwt-validate");
 
@@ -134,7 +133,11 @@ router.post(
             return res.json({ success: false, msg: "Invalid Credentials." });
           }
 
-          const token = jwt.sign({ data: finalUser }, config.secret, {});
+          const token = jwt.sign(
+            { data: finalUser },
+            process.env.JWT_SECRET,
+            {}
+          );
           res.json({
             msg: "Logged in Successfully.",
             success: true,
