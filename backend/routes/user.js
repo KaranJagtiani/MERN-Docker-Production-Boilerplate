@@ -5,8 +5,10 @@ const jwt = require("jsonwebtoken");
 
 const params_validator = require("../helpers/params-validator");
 const jwt_validator = require("../helpers/user-jwt-validate");
+const { errorLogger } = require("../helpers/logger");
 
 const Joi = require("joi");
+
 const User = require("../models/user");
 
 router.post(
@@ -48,20 +50,26 @@ router.post(
 
     User.getUserByUsername(newUser.username, (err, user) => {
       if (err) {
-        return res.json({ success: false, msg: "Something went wrong." });
+        errorLogger.error(err);
+        return res
+          .status(422)
+          .json({ success: false, msg: "Something went wrong." });
       }
       if (user) {
-        return res.json({
+        return res.status(422).json({
           success: false,
           msg: "Username has already been registered with us.",
         });
       }
       User.getUserByEmail(newUser.email, (err, user) => {
         if (err) {
-          return res.json({ success: false, msg: "Something went wrong." });
+          errorLogger.error(err);
+          return res
+            .status(422)
+            .json({ success: false, msg: "Something went wrong." });
         }
         if (user) {
-          return res.json({
+          return res.status(422).json({
             success: false,
             msg: "Email has already been registered with us.",
           });
@@ -69,12 +77,13 @@ router.post(
 
         User.addUser(newUser, (err) => {
           if (err) {
-            return res.json({
+            errorLogger.error(err);
+            return res.status(422).json({
               success: false,
               msg: "Something went wrong.",
             });
           }
-          res.json({
+          res.status(200).json({
             success: false,
             msg: "User registered successfully.",
           });
@@ -103,34 +112,43 @@ router.post(
     const username = req.body.username;
     const password = req.body.password;
 
-    if (!username || !password) {
-      return res.json({ success: false, msg: "Fill in all the fields." });
-    }
-
     User.getUserByUsername(username, (err, user) => {
       let finalUser;
       if (err) {
-        return res.json({ success: false, msg: "Something went wrong." });
+        errorLogger.error(err);
+        return res
+          .status(422)
+          .json({ success: false, msg: "Something went wrong." });
       }
       if (user) {
         finalUser = user;
       }
       User.getUserByEmail(username, (err, emailUser) => {
         if (err) {
-          return res.json({ success: false, msg: "Something went wrong." });
+          errorLogger.error(err);
+          return res
+            .status(422)
+            .json({ success: false, msg: "Something went wrong." });
         }
         if (!user) {
           if (!emailUser) {
-            return res.json({ success: false, msg: "Invalid Credentials." });
+            return res
+              .status(422)
+              .json({ success: false, msg: "Invalid Credentials." });
           }
           finalUser = emailUser;
         }
         User.comparePassword(password, finalUser.password, (err, isMatch) => {
           if (err) {
-            return res.json({ success: false, msg: "Something went wrong." });
+            errorLogger.error(err);
+            return res
+              .status(422)
+              .json({ success: false, msg: "Something went wrong." });
           }
           if (!isMatch) {
-            return res.json({ success: false, msg: "Invalid Credentials." });
+            return res
+              .status(422)
+              .json({ success: false, msg: "Invalid Credentials." });
           }
 
           const token = jwt.sign(
@@ -138,7 +156,7 @@ router.post(
             process.env.JWT_SECRET,
             {}
           );
-          res.json({
+          res.status(200).json({
             msg: "Logged in Successfully.",
             success: true,
             token: "JWT " + token,
@@ -159,7 +177,7 @@ router.get(
   "/profile",
   passport.authenticate("user", { session: false }),
   (req, res, next) => {
-    res.json({ success: true, user: req.user });
+    res.status(200).json({ success: true, user: req.user });
   }
 );
 
@@ -178,7 +196,8 @@ router.post(
   }),
   (req, res, next) => {
     let user = jwt_validator.validateUserJWTToken(req.headers.authorization);
-    if (!user) return res.json({ success: false, msg: "Invalid Token." });
+    if (!user)
+      return res.status(422).json({ success: false, msg: "Invalid Token." });
 
     const newUser = {
       username: req.body.username,
@@ -188,14 +207,14 @@ router.post(
     };
 
     if (newUser.newPassword != newUser.newConfirmPassword) {
-      return res.json({
+      return res.status(422).json({
         success: false,
         msg: "Both Password Fields Do Not Match.",
       });
     }
 
     if (newUser.currentPassword == newUser.newPassword) {
-      return res.json({
+      return res.status(422).json({
         success: false,
         msg: "Current Password Matches With The New Password.",
       });
@@ -203,26 +222,39 @@ router.post(
 
     User.getUserByUsername(newUser.username, (err, user) => {
       if (err) {
-        return res.json({ success: false, msg: "Something went wrong." });
+        return res
+          .status(422)
+          .json({ success: false, msg: "Something went wrong." });
       }
       if (!user) {
-        return res.json({ success: false, msg: "User Not Found." });
+        return res.status(404).json({ success: false, msg: "User Not Found." });
       }
       User.comparePassword(
         newUser.currentPassword,
         user.password,
         (err, isMatch) => {
           if (err) {
-            return res.json({ success: false, msg: "Something went wrong." });
+            errorLogger.error(err);
+
+            return res
+              .status(422)
+              .json({ success: false, msg: "Something went wrong." });
           }
           if (!isMatch) {
-            return res.json({ success: false, msg: "Incorrect Password." });
+            return res
+              .status(422)
+              .json({ success: false, msg: "Incorrect Password." });
           }
           User.updatePassword(newUser, (err) => {
             if (err) {
-              return res.json({ success: false, msg: "Something went wrong." });
+              errorLogger.error(err);
+              return res
+                .status(422)
+                .json({ success: false, msg: "Something went wrong." });
             }
-            return res.json({ success: true, msg: "Password Updated." });
+            return res
+              .status(200)
+              .json({ success: true, msg: "Password Updated." });
           });
         }
       );
