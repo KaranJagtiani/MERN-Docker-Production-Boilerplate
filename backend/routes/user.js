@@ -136,6 +136,7 @@ router.post(
 
           const token = jwt.sign({ data: finalUser }, config.secret, {});
           res.json({
+            msg: "Logged in Successfully.",
             success: true,
             token: "JWT " + token,
             user: {

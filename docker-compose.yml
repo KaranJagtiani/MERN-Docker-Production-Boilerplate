@@ -1,19 +1,42 @@
 version: "3"
 services:
   mongo:
-    image: mongo
     container_name: mongo
+    image: mongo
     restart: always
     ports:
       - "27018:27017"
+    networks:
+      - backend
     volumes:
-      - ./db-init.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - ./backend/docker-setup/mongo/db-init.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
       - ./backend/docker-setup/mongo/mongo-volume:/data/db
     environment:
       - MONGO_INITDB_DATABASE=mern_docker_starter
       - MONGO_INITDB_USER=local_user
       - MONGO_INITDB_PASSWORD=Password123
 
+  backend:
+    container_name: node
+    build:
+      context: ./backend
+      dockerfile: docker-setup/node/development/Dockerfile
+    networks:
+      - backend
+      - frontend
+    volumes:
+      - ./backend:/backend
+    env_file:
+      - ./backend/.env.development
+    tty: true
+    stdin_open: true
+    depends_on:
+      - mongo
+    ports:
+      - "3000:3000"
+
 networks:
-  default:
-    name: mern-docker-network
+  backend:
+    name: backend
+  frontend:
+    name: frontend
