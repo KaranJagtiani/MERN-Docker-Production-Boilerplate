@@ -1,27 +1,39 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
-import validator from "validator";
 import { useNavigate } from "react-router-dom";
 
+import validator from "validator";
+
 import axios from "../../api/axios";
-import { loginRoute } from "../../api/routes";
+import { registerRoute } from "../../api/routes";
 import FormField from "../../components/FormField/FormField";
-import { AuthContext } from "../../contexts/AuthContext";
 
-import "./Login.scss";
+import "./Register.scss";
 
-const Login = () => {
-  const [password, setPassword] = useState("");
+const Register = () => {
   const [email, setEmail] = useState("");
-  const [passwordError, setpasswordError] = useState("");
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [nameError, setNameError] = useState("");
   const [emailError, setemailError] = useState("");
+  const [passwordError, setpasswordError] = useState("");
+
   const [formValid, setFormValid] = useState(false);
 
-  const { setIsLoggedIn, setUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleValidation = (event) => {
     let formIsValid = true;
+
+    if (!validator.isAlpha(name)) {
+      formIsValid = false;
+      setNameError("Name Not Valid");
+      return false;
+    } else {
+      setNameError("");
+      formIsValid = true;
+    }
 
     if (!validator.isEmail(email)) {
       formIsValid = false;
@@ -59,16 +71,14 @@ const Login = () => {
 
     if (formValid) {
       axios
-        .post(loginRoute, {
+        .post(registerRoute, {
+          name: name,
           email: email,
           password: password,
         })
         .then(function (response) {
-          toast.success("Logged In Successfully!");
-          setIsLoggedIn(true);
-          setUser(response.data.user);
-          localStorage.setItem("token", response.data.token);
-          navigate("/");
+          toast.success("Registration Successful!");
+          navigate("/login");
         })
         .catch(function (error) {
           toast.error(error.response.data.msg);
@@ -80,8 +90,19 @@ const Login = () => {
     <div className="container">
       <div className="row d-flex justify-content-center">
         <div className="col-md-4">
-          <form id="loginform" onSubmit={loginSubmit} className="login-form">
-            <h3 className="text-center login-header">Login</h3>
+          <form id="loginform" onSubmit={loginSubmit} className="register-form">
+            <h3 className="text-center register-header">Register</h3>
+            <div className="form-group mt-2">
+              <h5>Name</h5>
+              <FormField
+                type="text"
+                placeholder="Enter Name"
+                setFunc={setName}
+              />
+              <small id="nameError" className="text-danger form-text mt-2">
+                {nameError}
+              </small>
+            </div>
             <div className="form-group mt-2">
               <h5>Email address</h5>
               <FormField
@@ -89,7 +110,7 @@ const Login = () => {
                 placeholder="Enter Email"
                 setFunc={setEmail}
               />
-              <small id="emailHelp" className="text-danger form-text mt-2">
+              <small id="emailError" className="text-danger form-text mt-2">
                 {emailError}
               </small>
             </div>
@@ -116,4 +137,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;

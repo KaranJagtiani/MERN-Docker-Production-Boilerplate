@@ -6,8 +6,10 @@ function About() {
   return (
     <div className="text-center">
       <main>
-        <h1 class="mt-4 mb-2">Welcome to the About Page!</h1>
-        <p>That feels like an existential question, don't you think?</p>
+        <h1 className="mt-4 mb-2">Welcome to the About Page!</h1>
+        <p>
+          You are never too old to set another goal or to dream a new dream.
+        </p>
       </main>
       <nav>
         <Link to="/">Home</Link>

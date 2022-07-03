@@ -1,39 +1,29 @@
 import { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import validator from "validator";
-import { useNavigate } from "react-router-dom";
 
-import axios from "../../api/axios";
-import { loginRoute } from "../../api/routes";
-import FormField from "../../components/FormField/FormField";
 import { AuthContext } from "../../contexts/AuthContext";
 
-import "./Login.scss";
+import axios from "../../api/axios";
+import { changePasswordRoute } from "../../api/routes";
+import FormField from "../../components/FormField/FormField";
 
-const Login = () => {
-  const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
+import "./Profile.scss";
+
+const Profile = () => {
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [newConfirmPassword, setNewConfirmPassword] = useState("");
   const [passwordError, setpasswordError] = useState("");
-  const [emailError, setemailError] = useState("");
   const [formValid, setFormValid] = useState(false);
 
-  const { setIsLoggedIn, setUser } = useContext(AuthContext);
-  const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
 
   const handleValidation = (event) => {
     let formIsValid = true;
 
-    if (!validator.isEmail(email)) {
-      formIsValid = false;
-      setemailError("Email Not Valid");
-      return false;
-    } else {
-      setemailError("");
-      formIsValid = true;
-    }
-
     if (
-      !validator.isStrongPassword(password, {
+      !validator.isStrongPassword(currentPassword, {
         minLength: 8,
         minLowercase: 1,
         minUppercase: 1,
@@ -59,16 +49,14 @@ const Login = () => {
 
     if (formValid) {
       axios
-        .post(loginRoute, {
-          email: email,
-          password: password,
+        .post(changePasswordRoute, {
+          email: user.email,
+          currentPassword: currentPassword,
+          newPassword: newPassword,
+          newConfirmPassword: newConfirmPassword,
         })
         .then(function (response) {
-          toast.success("Logged In Successfully!");
-          setIsLoggedIn(true);
-          setUser(response.data.user);
-          localStorage.setItem("token", response.data.token);
-          navigate("/");
+          toast.success("Password Changed Successfully!");
         })
         .catch(function (error) {
           toast.error(error.response.data.msg);
@@ -81,28 +69,35 @@ const Login = () => {
       <div className="row d-flex justify-content-center">
         <div className="col-md-4">
           <form id="loginform" onSubmit={loginSubmit} className="login-form">
-            <h3 className="text-center login-header">Login</h3>
-            <div className="form-group mt-2">
-              <h5>Email address</h5>
-              <FormField
-                type="email"
-                placeholder="Enter Email"
-                setFunc={setEmail}
-              />
-              <small id="emailHelp" className="text-danger form-text mt-2">
-                {emailError}
-              </small>
-            </div>
+            <h3 className="text-center login-header">Change Password</h3>
             <div className="form-group mt-4">
-              <h5>Password</h5>
+              <h5>Current Password</h5>
               <FormField
                 type="password"
                 placeholder="Enter Password"
-                setFunc={setPassword}
+                setFunc={setCurrentPassword}
               />
               <small id="passworderror" className="text-danger form-text">
                 {passwordError}
               </small>
+            </div>
+
+            <div className="form-group mt-4">
+              <h5>New Password</h5>
+              <FormField
+                type="password"
+                placeholder="Enter Password"
+                setFunc={setNewPassword}
+              />
+            </div>
+
+            <div className="form-group mt-4">
+              <h5>New Confirm Password</h5>
+              <FormField
+                type="password"
+                placeholder="Enter Password"
+                setFunc={setNewConfirmPassword}
+              />
             </div>
             <div className="text-center submit-btn">
               <button type="submit" className="btn btn-dark mt-4">
@@ -116,4 +111,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Profile;

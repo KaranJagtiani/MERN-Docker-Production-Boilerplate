@@ -1,0 +1,39 @@
+.nav-bar {
+  text-align: center;
+
+  a {
+    font-weight: 500;
+    font-size: 20px !important;
+    text-decoration: none;
+    color: #afafaf;
+    margin-left: 40px;
+    padding: 10px 0;
+  }
+
+  a:hover {
+    color: #f1f1f1;
+    transition: 0.6s all;
+  }
+
+  .nav-heading {
+    a {
+      font-weight: 600;
+      color: #e3e3e3;
+    }
+    a:hover {
+      color: #ffffff;
+    }
+  }
+
+  .nav-heading:hover {
+    cursor: pointer;
+  }
+
+  .active {
+    color: #ffffff;
+  }
+}
+
+.logout-icon {
+  color: #cd204f !important;
+}
