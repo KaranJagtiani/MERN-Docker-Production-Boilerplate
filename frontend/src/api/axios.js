@@ -4,7 +4,7 @@ const isProduction = process.env.NODE_ENV === "production";
 
 const baseURL = isProduction
   ? "https://<your-production-domain>"
-  : "http://localhost:8080";
+  : "http://localhost:80/api";
 
 const defaultOptions = {
   baseURL,

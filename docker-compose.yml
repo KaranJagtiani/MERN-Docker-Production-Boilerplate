@@ -1,13 +1,13 @@
 version: "3"
 services:
   mongo:
-    container_name: mongo
+    container_name: mern-mongo
     image: mongo
     restart: always
     ports:
       - "27018:27017"
     networks:
-      - backend
+      - default
     volumes:
       - ./backend/docker-setup/mongo/db-init.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
       - ./backend/docker-setup/mongo/mongo-volume:/data/db
@@ -17,12 +17,12 @@ services:
       - MONGO_INITDB_PASSWORD=Password123
 
   backend:
-    container_name: node
+    container_name: mern-node
     build:
       context: ./backend
       dockerfile: docker-setup/node/development/Dockerfile
     networks:
-      - backend
+      - default
       - frontend
     volumes:
       - ./backend:/backend
@@ -33,10 +33,42 @@ services:
     depends_on:
       - mongo
     ports:
-      - "8080:3000"
+      - "8080:4000"
+
+  frontend:
+    container_name: mern-react
+    build:
+      context: ./frontend
+      dockerfile: docker-setup/react/Dockerfile
+    networks:
+      - frontend
+    volumes:
+      - ./frontend:/frontend
+    depends_on:
+      - backend
+    tty: true
+    stdin_open: true
+    ports:
+      - "3000:3000"
+
+  loadbalancer:
+    container_name: mern-nginx
+    build:
+      context: ./frontend/docker-setup/nginx
+      dockerfile: ./Dockerfile
+    networks:
+      - frontend
+      - default
+    tty: true
+    stdin_open: true
+    depends_on:
+      - frontend
+    ports:
+      - "80:80"
+      - "443:443"
 
 networks:
-  backend:
-    name: backend
+  default:
+    name: mern-template-backend
   frontend:
-    name: frontend
+    name: mern-template-frontend

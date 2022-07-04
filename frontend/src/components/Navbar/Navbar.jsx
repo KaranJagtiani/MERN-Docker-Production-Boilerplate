@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 import { Navbar, Container, Nav } from "react-bootstrap";
 import { useAuthContext } from "../../contexts/AuthContext";
@@ -16,7 +16,7 @@ import { faPowerOff } from "@fortawesome/fontawesome-free-solid";
 import "./Navbar.scss";
 
 const NavBar = () => {
-  const { user, isLoggedIn, setIsLoggedIn } = useAuthContext();
+  const { isLoggedIn, setIsLoggedIn } = useAuthContext();
 
   return (
     <>
