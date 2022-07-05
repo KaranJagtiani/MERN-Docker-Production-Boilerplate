@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "start-prod": "NODE_ENV=production pm2 start app.js",
     "scan": "auditjs ossi"
   },
   "author": "Karan Jagtiani",
@@ -28,6 +29,7 @@
     "winston-daily-rotate-file": "^4.7.1"
   },
   "devDependencies": {
-    "auditjs": "^4.0.37"
+    "auditjs": "^4.0.37",
+    "nodemon": "^2.0.18"
   }
 }

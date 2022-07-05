@@ -1,4 +1,4 @@
-FROM node:16-alpine
+FROM node:16-slim
 
 # Create app directory
 WORKDIR /frontend
@@ -6,11 +6,9 @@ WORKDIR /frontend
 # Install app dependencies
 COPY package.json yarn.lock ./
 
-RUN yarn install
-
 COPY . .
 
-RUN yarn build
+RUN yarn install
 
 ENV NODE_ENV=development
 

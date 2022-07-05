@@ -1,4 +1,6 @@
-require("dotenv").config({ path: `./.env.${process.env.NODE_ENV}` });
+require("dotenv").config({
+  path: `./.env.${process.env.NODE_ENV}`,
+});
 require("./config/db-connection");
 
 const express = require("express");
@@ -31,6 +33,11 @@ app.use(rateLimiter);
 const users_route = require("./routes/user");
 
 app.use("/user", users_route);
+
+// default case for unmatched routes
+app.use(function (req, res) {
+  res.status(404);
+});
 
 const port = process.env.SERVER_PORT;
 

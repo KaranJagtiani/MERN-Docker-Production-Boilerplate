@@ -5,7 +5,7 @@ services:
     image: mongo
     restart: always
     ports:
-      - "27018:27017"
+      - "27017"
     networks:
       - default
     volumes:
@@ -20,40 +20,37 @@ services:
     container_name: node-mern-docker-boilerplate
     build:
       context: ./backend
-      dockerfile: docker-setup/node/development/Dockerfile
+      dockerfile: docker-setup/node/production/Dockerfile
     networks:
       - default
       - frontend
-    volumes:
-      - ./backend:/home/node/app
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=production
     env_file:
-      - ./backend/.env.development
+      - ./backend/.env.production
     tty: true
     stdin_open: true
     depends_on:
       - mongo
     ports:
-      - "5000:4000"
+      - "4000"
 
   frontend:
     container_name: react-mern-docker-boilerplate
     build:
       context: ./frontend
-      dockerfile: docker-setup/react/development/Dockerfile
+      dockerfile: docker-setup/react/production/Dockerfile
     networks:
       - frontend
     environment:
-      - NODE_ENV=development
-    volumes:
-      - ./frontend:/frontend
+      - NODE_ENV=production
     depends_on:
       - backend
     tty: true
     stdin_open: true
     ports:
-      - "3000:3000"
+      - "80:80"
+      - "443:443"
 
 networks:
   default:
