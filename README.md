@@ -2,6 +2,11 @@
   <img src="./images/1.png" width="700px">
 </p>
 
+### My Notes
+On first pull np install the modules in front and backend dirs.
+Docker compose up -d
+Docker compose down
+
 A production ready & secure boilerplate for the MERN Stack that uses Docker & Nginx.
 
 - **Focus on the product and not the setup**. You can directly start working on your idea and not worry about the nitty gritty setup.
